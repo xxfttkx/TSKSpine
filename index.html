@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spine 预览器 · Twinkle Star Knights</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    display: flex;
+    font-family: "Microsoft YaHei", "Segoe UI", sans-serif;
+    background: #1e1e22;
+    color: #d8d8de;
+    font-size: 13px;
+  }
+  #sidebar {
+    width: 248px;
+    min-width: 248px;
+    background: #26262b;
+    border-right: 1px solid #3a3a42;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+  }
+  #sidebar h1 { font-size: 15px; color: #fff; margin-bottom: 2px; }
+  #sidebar .sub { font-size: 11px; color: #888; line-height: 1.5; }
+  .btn-row { display: flex; gap: 6px; }
+  button {
+    flex: 1;
+    background: #3a6ea5;
+    color: #fff;
+    border: none;
+    padding: 8px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  button:hover { background: #4a82bd; }
+  button:disabled { background: #444; color: #888; cursor: default; }
+  button.secondary { background: #44444c; }
+  button.secondary:hover { background: #55555f; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 11px; color: #9a9aa4; }
+  select, input[type="text"] {
+    background: #1c1c20;
+    color: #d8d8de;
+    border: 1px solid #3a3a42;
+    border-radius: 4px;
+    padding: 6px;
+    font-size: 12px;
+    width: 100%;
+  }
+  .check { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+  .check input { accent-color: #3a6ea5; }
+  input[type="range"] { width: 100%; accent-color: #3a6ea5; }
+  .speed-row { display: flex; align-items: center; gap: 8px; }
+  .speed-row span { min-width: 38px; text-align: right; font-variant-numeric: tabular-nums; }
+  #status {
+    margin-top: auto;
+    background: #1c1c20;
+    border: 1px solid #3a3a42;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 11px;
+    line-height: 1.6;
+    color: #aac;
+    min-height: 48px;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  #status.err { color: #e88; border-color: #6a4444; }
+  #canvas-wrap { flex: 1; position: relative; }
+  canvas { display: block; width: 100%; height: 100%; }
+  #drop-hint {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none;
+    font-size: 16px; color: #666;
+    text-align: center; line-height: 2;
+  }
+  #drop-hint .big { font-size: 22px; color: #888; }
+  #canvas-wrap.dragover { outline: 3px dashed #3a6ea5; outline-offset: -12px; }
+
+  /* 角色搜索框 + 常驻角色列表 */
+  #char-search:disabled { cursor: default; }
+  .char-list {
+    max-height: 200px;
+    overflow-y: auto;
+    background: #1c1c20;
+    border: 1px solid #3a3a42;
+    border-radius: 4px;
+  }
+  .char-item {
+    padding: 6px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    color: #d8d8de;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .char-item:hover { background: #2f4a63; color: #fff; }
+  .char-item.selected { background: #3a6ea5; color: #fff; }
+  .char-item.selected::after { content: " ✓"; }
+  .char-empty { padding: 10px; font-size: 11px; color: #777; text-align: center; }
+</style>
+</head>
+<body>
+  <div id="sidebar">
+    <div>
+      <h1>Spine 预览器</h1>
+      <div class="sub">拖入角色资源（.skel / .atlas / .png，可多选或直接拖整个文件夹），自动按文件名分组。滚轮缩放，拖拽平移，双击重置视角。</div>
+    </div>
+    <div class="btn-row">
+      <button id="btn-files">选择文件</button>
+      <button id="btn-folder" class="secondary">选择文件夹</button>
+    </div>
+    <input type="file" id="file-input" multiple hidden>
+    <input type="file" id="folder-input" webkitdirectory directory multiple hidden>
+
+    <div class="field">
+      <label>搜索角色</label>
+      <input type="text" id="char-search" placeholder="未加载资源" disabled autocomplete="off" spellcheck="false">
+      <label>角色</label>
+      <div class="char-list" id="char-list">
+        <div class="char-empty">拖入资源后显示角色</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>动画</label>
+      <select id="anim-select" disabled><option>—</option></select>
+    </div>
+    <div class="field">
+      <label>皮肤</label>
+      <select id="skin-select" disabled><option>default</option></select>
+    </div>
+    <label class="check"><input type="checkbox" id="loop-check" checked> 循环播放</label>
+    <div class="field">
+      <label>播放速度</label>
+      <div class="speed-row">
+        <input type="range" id="speed-range" min="0.1" max="2" step="0.05" value="1">
+        <span id="speed-val">1.00x</span>
+      </div>
+    </div>
+    <label class="check"><input type="checkbox" id="debug-check"> 显示骨骼调试线</label>
+    <button id="btn-reset" class="secondary">重置视角</button>
+    <div id="status">等待加载资源……</div>
+  </div>
+
+  <div id="canvas-wrap">
+    <canvas id="canvas"></canvas>
+    <div id="drop-hint">
+      <div>
+        <div class="big">⬇ 拖放到此处</div>
+        .skel + .atlas + .png 三件套<br>
+        （spine_dump 里的角色目录可整个拖入）
+      </div>
+    </div>
+  </div>
+
+  <script src="./viewer.bundle.js"></script>
+</body>
+</html>
