@@ -13,7 +13,7 @@
 - 只解析命中 Spine 的 bundle，绕开 AssetStudio 的 shader 兼容问题
 - 导出 `manifest.csv` 清单，记录 bundle、资源类型、文件名与 spine 版本号
 - 预览器支持：
-  - 启动即自动加载 `test/` 示例角色（服务器扫描目录生成清单，新增文件实时生效），开箱即看；拖入自己的资源即替换
+  - 启动即自动加载 `test/` 示例角色（清单随仓库提交，本地与 GitHub Pages 静态部署均可自动加载），开箱即看；拖入自己的资源即替换
   - 拖入文件 / 整个文件夹，自动按文件名分组配对
   - 角色选择为**独立搜索框 + 常驻列表**：搜索框只负责关键字过滤（大小写不敏感），回车选中第一个匹配项
   - 默认为**单选模式**：点击列表项即互斥切换角色，只预览一个；勾选"叠加模式"开关后变为多选
@@ -76,7 +76,7 @@ npm install
 npm start
 ```
 
-打开 http://localhost:8080/ ，页面会**自动加载 `test/` 目录中的示例角色**（服务器启动时扫描目录生成清单，新增文件实时生效）；把 `spine_dump` 里的角色目录**整个拖进页面**（或点"选择文件夹"）即可加载自己提取的资源。
+打开 http://localhost:8080/ ，页面会**自动加载 `test/` 目录中的示例角色**（清单 `test-manifest.json` 由 `gen-manifest.mjs` 扫描生成并提交进仓库，本地服务器与 GitHub Pages 等静态部署均可用）；把 `spine_dump` 里的角色目录**整个拖进页面**（或点"选择文件夹"）即可加载自己提取的资源。新增 test 资源后运行 `npm run manifest`（或 `npm run build`）更新清单。
 
 也可以只构建不启动服务器：
 
@@ -128,6 +128,8 @@ TSKSpine/
 ├── viewer.js             # 预览器源码（esbuild 入口）
 ├── viewer.bundle.js      # 打包产物（由 npm run build 生成）
 ├── serve.mjs             # esbuild 本地服务器脚本
+├── gen-manifest.mjs      # 扫描 test/ 生成 test-manifest.json
+├── test-manifest.json    # test/ 资源清单（提交进仓库，供静态部署自动加载）
 ├── test/                 # 示例 Spine 资源（启动预览器自动加载）
 ├── package.json
 └── spine_dump/           # 提取输出目录（运行脚本后生成）

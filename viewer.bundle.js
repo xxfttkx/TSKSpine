@@ -12456,7 +12456,7 @@ ${desc}`);
   });
   async function autoLoadTest() {
     try {
-      const r = await fetch("./.test-manifest.json", { cache: "no-store" });
+      const r = await fetch("./test-manifest.json", { cache: "no-store" });
       if (!r.ok) return;
       const { dir, files } = await r.json();
       const loaded = [];

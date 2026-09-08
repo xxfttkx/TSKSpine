@@ -576,11 +576,12 @@ window.addEventListener("drop", (e) => {
 });
 
 // ---------- 启动时自动加载 test/ 示例资源 ----------
-// serve.mjs 启动时会扫描 test/ 目录生成 .test-manifest.json；
+// 清单 test-manifest.json 由 gen-manifest.mjs 扫描 test/ 生成并提交进仓库，
+// 因此本地服务器与 GitHub Pages 等纯静态环境都能读取；
 // 通过 file:// 直接打开页面或清单不存在时静默跳过，仍可手动拖入。
 async function autoLoadTest() {
   try {
-    const r = await fetch("./.test-manifest.json", { cache: "no-store" });
+    const r = await fetch("./test-manifest.json", { cache: "no-store" });
     if (!r.ok) return;
     const { dir, files } = await r.json();
     const loaded = [];

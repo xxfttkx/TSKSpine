@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "description": "Local Spine skeleton viewer for Twinkle Star Knights dumped assets (.skel/.atlas/.png)",
   "scripts": {
-    "build": "esbuild viewer.js --bundle --outfile=viewer.bundle.js --format=iife --target=es2020",
+    "manifest": "node gen-manifest.mjs",
+    "build": "node gen-manifest.mjs && esbuild viewer.js --bundle --outfile=viewer.bundle.js --format=iife --target=es2020",
     "start": "node serve.mjs"
   },
   "dependencies": {
