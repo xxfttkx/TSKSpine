@@ -320,7 +320,7 @@
      * @param stride The number of `worldVertices` entries between the value pairs written. */
     computeWorldVertices(slot, start, count, worldVertices, offset, stride) {
       count = offset + (count >> 1) * stride;
-      let skeleton2 = slot.bone.skeleton;
+      let skeleton = slot.bone.skeleton;
       let deformArray = slot.deform;
       let vertices = this.vertices;
       let bones = this.bones;
@@ -344,7 +344,7 @@
         v += n + 1;
         skip += n;
       }
-      let skeletonBones = skeleton2.bones;
+      let skeletonBones = skeleton.bones;
       if (deformArray.length == 0) {
         for (let w = offset, b = skip * 3; w < count; w += stride) {
           let wx = 0, wy = 0;
@@ -424,8 +424,8 @@
      * See Timeline {@link Timeline#apply(Skeleton, float, float, Array, float, MixBlend, MixDirection)}.
      * @param loop If true, the animation repeats after {@link #getDuration()}.
      * @param events May be null to ignore fired events. */
-    apply(skeleton2, lastTime2, time, loop, events, alpha, blend, direction) {
-      if (!skeleton2)
+    apply(skeleton, lastTime2, time, loop, events, alpha, blend, direction) {
+      if (!skeleton)
         throw new Error("skeleton cannot be null.");
       if (loop && this.duration != 0) {
         time %= this.duration;
@@ -434,7 +434,7 @@
       }
       let timelines = this.timelines;
       for (let i = 0, n = timelines.length; i < n; i++)
-        timelines[i].apply(skeleton2, lastTime2, time, events, alpha, blend, direction);
+        timelines[i].apply(skeleton, lastTime2, time, events, alpha, blend, direction);
     }
   };
   var MixBlend;
@@ -677,8 +677,8 @@
       this.boneIndex = 0;
       this.boneIndex = boneIndex;
     }
-    apply(skeleton2, lastTime2, time, events, alpha, blend, direction) {
-      let bone = skeleton2.bones[this.boneIndex];
+    apply(skeleton, lastTime2, time, events, alpha, blend, direction) {
+      let bone = skeleton.bones[this.boneIndex];
       if (!bone.active)
         return;
       let frames = this.frames;
@@ -711,8 +711,8 @@
       this.boneIndex = 0;
       this.boneIndex = boneIndex;
     }
-    apply(skeleton2, lastTime2, time, events, alpha, blend, direction) {
-      let bone = skeleton2.bones[this.boneIndex];
+    apply(skeleton, lastTime2, time, events, alpha, blend, direction) {
+      let bone = skeleton.bones[this.boneIndex];
       if (!bone.active)
         return;
       let frames = this.frames;
@@ -811,8 +811,8 @@
       this.boneIndex = 0;
       this.boneIndex = boneIndex;
     }
-    apply(skeleton2, lastTime2, time, events, alpha, blend, direction) {
-      let bone = skeleton2.bones[this.boneIndex];
+    apply(skeleton, lastTime2, time, events, alpha, blend, direction) {
+      let bone = skeleton.bones[this.boneIndex];
       if (!bone.active)
         return;
       let frames = this.frames;
@@ -846,8 +846,8 @@
       this.boneIndex = 0;
       this.boneIndex = boneIndex;
     }
-    apply(skeleton2, lastTime2, time, events, alpha, blend, direction) {
-      let bone = skeleton2.bones[this.boneIndex];
+    apply(skeleton, lastTime2, time, events, alpha, blend, direction) {
+      let bone = skeleton.bones[this.boneIndex];
       if (!bone.active)
         return;
       let frames = this.frames;
@@ -881,8 +881,8 @@
       this.boneIndex = 0;
       this.boneIndex = boneIndex;
     }
-    apply(skeleton2, lastTime2, time, events, alpha, blend, direction) {
-      let bone = skeleton2.bones[this.boneIndex];
+    apply(skeleton, lastTime2, time, events, alpha, blend, direction) {
+      let bone = skeleton.bones[this.boneIndex];
       if (!bone.active)
         return;
       let frames = this.frames;
@@ -1019,8 +1019,8 @@
       this.boneIndex = 0;
       this.boneIndex = boneIndex;
     }
-    apply(skeleton2, lastTime2, time, events, alpha, blend, direction) {
-      let bone = skeleton2.bones[this.boneIndex];
+    apply(skeleton, lastTime2, time, events, alpha, blend, direction) {
+      let bone = skeleton.bones[this.boneIndex];
       if (!bone.active)
         return;
       let frames = this.frames;
@@ -1080,8 +1080,8 @@
       this.boneIndex = 0;
       this.boneIndex = boneIndex;
     }
-    apply(skeleton2, lastTime2, time, events, alpha, blend, direction) {
-      let bone = skeleton2.bones[this.boneIndex];
+    apply(skeleton, lastTime2, time, events, alpha, blend, direction) {
+      let bone = skeleton.bones[this.boneIndex];
       if (!bone.active)
         return;
       let frames = this.frames;
@@ -1141,8 +1141,8 @@
       this.boneIndex = 0;
       this.boneIndex = boneIndex;
     }
-    apply(skeleton2, lastTime2, time, events, alpha, blend, direction) {
-      let bone = skeleton2.bones[this.boneIndex];
+    apply(skeleton, lastTime2, time, events, alpha, blend, direction) {
+      let bone = skeleton.bones[this.boneIndex];
       if (!bone.active)
         return;
       let frames = this.frames;
@@ -1241,8 +1241,8 @@
       this.boneIndex = 0;
       this.boneIndex = boneIndex;
     }
-    apply(skeleton2, lastTime2, time, events, alpha, blend, direction) {
-      let bone = skeleton2.bones[this.boneIndex];
+    apply(skeleton, lastTime2, time, events, alpha, blend, direction) {
+      let bone = skeleton.bones[this.boneIndex];
       if (!bone.active)
         return;
       let frames = this.frames;
@@ -1276,8 +1276,8 @@
       this.boneIndex = 0;
       this.boneIndex = boneIndex;
     }
-    apply(skeleton2, lastTime2, time, events, alpha, blend, direction) {
-      let bone = skeleton2.bones[this.boneIndex];
+    apply(skeleton, lastTime2, time, events, alpha, blend, direction) {
+      let bone = skeleton.bones[this.boneIndex];
       if (!bone.active)
         return;
       let frames = this.frames;
@@ -1338,8 +1338,8 @@
         /*A*/
       ] = a;
     }
-    apply(skeleton2, lastTime2, time, events, alpha, blend, direction) {
-      let slot = skeleton2.slots[this.slotIndex];
+    apply(skeleton, lastTime2, time, events, alpha, blend, direction) {
+      let slot = skeleton.slots[this.slotIndex];
       if (!slot.bone.active)
         return;
       let frames = this.frames;
@@ -1491,8 +1491,8 @@
         /*B*/
       ] = b;
     }
-    apply(skeleton2, lastTime2, time, events, alpha, blend, direction) {
-      let slot = skeleton2.slots[this.slotIndex];
+    apply(skeleton, lastTime2, time, events, alpha, blend, direction) {
+      let slot = skeleton.slots[this.slotIndex];
       if (!slot.bone.active)
         return;
       let frames = this.frames;
@@ -1612,8 +1612,8 @@
       this.slotIndex = 0;
       this.slotIndex = slotIndex;
     }
-    apply(skeleton2, lastTime2, time, events, alpha, blend, direction) {
-      let slot = skeleton2.slots[this.slotIndex];
+    apply(skeleton, lastTime2, time, events, alpha, blend, direction) {
+      let slot = skeleton.slots[this.slotIndex];
       if (!slot.bone.active)
         return;
       let color = slot.color;
@@ -1684,8 +1684,8 @@
         /*B2*/
       ] = b2;
     }
-    apply(skeleton2, lastTime2, time, events, alpha, blend, direction) {
-      let slot = skeleton2.slots[this.slotIndex];
+    apply(skeleton, lastTime2, time, events, alpha, blend, direction) {
+      let slot = skeleton.slots[this.slotIndex];
       if (!slot.bone.active)
         return;
       let frames = this.frames;
@@ -1921,8 +1921,8 @@
         /*B2*/
       ] = b2;
     }
-    apply(skeleton2, lastTime2, time, events, alpha, blend, direction) {
-      let slot = skeleton2.slots[this.slotIndex];
+    apply(skeleton, lastTime2, time, events, alpha, blend, direction) {
+      let slot = skeleton.slots[this.slotIndex];
       if (!slot.bone.active)
         return;
       let frames = this.frames;
@@ -2128,24 +2128,24 @@
       this.frames[frame2] = time;
       this.attachmentNames[frame2] = attachmentName;
     }
-    apply(skeleton2, lastTime2, time, events, alpha, blend, direction) {
-      let slot = skeleton2.slots[this.slotIndex];
+    apply(skeleton, lastTime2, time, events, alpha, blend, direction) {
+      let slot = skeleton.slots[this.slotIndex];
       if (!slot.bone.active)
         return;
       if (direction == MixDirection.mixOut) {
         if (blend == MixBlend.setup)
-          this.setAttachment(skeleton2, slot, slot.data.attachmentName);
+          this.setAttachment(skeleton, slot, slot.data.attachmentName);
         return;
       }
       if (time < this.frames[0]) {
         if (blend == MixBlend.setup || blend == MixBlend.first)
-          this.setAttachment(skeleton2, slot, slot.data.attachmentName);
+          this.setAttachment(skeleton, slot, slot.data.attachmentName);
         return;
       }
-      this.setAttachment(skeleton2, slot, this.attachmentNames[Timeline.search1(this.frames, time)]);
+      this.setAttachment(skeleton, slot, this.attachmentNames[Timeline.search1(this.frames, time)]);
     }
-    setAttachment(skeleton2, slot, attachmentName) {
-      slot.setAttachment(!attachmentName ? null : skeleton2.getAttachment(this.slotIndex, attachmentName));
+    setAttachment(skeleton, slot, attachmentName) {
+      slot.setAttachment(!attachmentName ? null : skeleton.getAttachment(this.slotIndex, attachmentName));
     }
   };
   var DeformTimeline = class extends CurveTimeline {
@@ -2217,8 +2217,8 @@
       let x = curves[n - 2], y = curves[n - 1];
       return y + (1 - y) * (time - x) / (this.frames[frame2 + this.getFrameEntries()] - x);
     }
-    apply(skeleton2, lastTime2, time, firedEvents, alpha, blend, direction) {
-      let slot = skeleton2.slots[this.slotIndex];
+    apply(skeleton, lastTime2, time, firedEvents, alpha, blend, direction) {
+      let slot = skeleton.slots[this.slotIndex];
       if (!slot.bone.active)
         return;
       let slotAttachment = slot.getAttachment();
@@ -2388,13 +2388,13 @@
       this.events[frame2] = event;
     }
     /** Fires events for frames > `lastTime` and <= `time`. */
-    apply(skeleton2, lastTime2, time, firedEvents, alpha, blend, direction) {
+    apply(skeleton, lastTime2, time, firedEvents, alpha, blend, direction) {
       if (!firedEvents)
         return;
       let frames = this.frames;
       let frameCount = this.frames.length;
       if (lastTime2 > time) {
-        this.apply(skeleton2, lastTime2, Number.MAX_VALUE, firedEvents, alpha, blend, direction);
+        this.apply(skeleton, lastTime2, Number.MAX_VALUE, firedEvents, alpha, blend, direction);
         lastTime2 = -1;
       } else if (lastTime2 >= frames[frameCount - 1])
         return;
@@ -2433,23 +2433,23 @@
       this.frames[frame2] = time;
       this.drawOrders[frame2] = drawOrder;
     }
-    apply(skeleton2, lastTime2, time, firedEvents, alpha, blend, direction) {
+    apply(skeleton, lastTime2, time, firedEvents, alpha, blend, direction) {
       if (direction == MixDirection.mixOut) {
         if (blend == MixBlend.setup)
-          Utils.arrayCopy(skeleton2.slots, 0, skeleton2.drawOrder, 0, skeleton2.slots.length);
+          Utils.arrayCopy(skeleton.slots, 0, skeleton.drawOrder, 0, skeleton.slots.length);
         return;
       }
       if (time < this.frames[0]) {
         if (blend == MixBlend.setup || blend == MixBlend.first)
-          Utils.arrayCopy(skeleton2.slots, 0, skeleton2.drawOrder, 0, skeleton2.slots.length);
+          Utils.arrayCopy(skeleton.slots, 0, skeleton.drawOrder, 0, skeleton.slots.length);
         return;
       }
       let drawOrderToSetupIndex = this.drawOrders[Timeline.search1(this.frames, time)];
       if (!drawOrderToSetupIndex)
-        Utils.arrayCopy(skeleton2.slots, 0, skeleton2.drawOrder, 0, skeleton2.slots.length);
+        Utils.arrayCopy(skeleton.slots, 0, skeleton.drawOrder, 0, skeleton.slots.length);
       else {
-        let drawOrder = skeleton2.drawOrder;
-        let slots = skeleton2.slots;
+        let drawOrder = skeleton.drawOrder;
+        let slots = skeleton.slots;
         for (let i = 0, n = drawOrderToSetupIndex.length; i < n; i++)
           drawOrder[i] = slots[drawOrderToSetupIndex[i]];
       }
@@ -2492,8 +2492,8 @@
         /*STRETCH*/
       ] = stretch ? 1 : 0;
     }
-    apply(skeleton2, lastTime2, time, firedEvents, alpha, blend, direction) {
-      let constraint = skeleton2.ikConstraints[this.ikConstraintIndex];
+    apply(skeleton, lastTime2, time, firedEvents, alpha, blend, direction) {
+      let constraint = skeleton.ikConstraints[this.ikConstraintIndex];
       if (!constraint.active)
         return;
       let frames = this.frames;
@@ -2658,8 +2658,8 @@
         /*SHEARY*/
       ] = mixShearY;
     }
-    apply(skeleton2, lastTime2, time, firedEvents, alpha, blend, direction) {
-      let constraint = skeleton2.transformConstraints[this.transformConstraintIndex];
+    apply(skeleton, lastTime2, time, firedEvents, alpha, blend, direction) {
+      let constraint = skeleton.transformConstraints[this.transformConstraintIndex];
       if (!constraint.active)
         return;
       let frames = this.frames;
@@ -2845,8 +2845,8 @@
       this.pathConstraintIndex = 0;
       this.pathConstraintIndex = pathConstraintIndex;
     }
-    apply(skeleton2, lastTime2, time, firedEvents, alpha, blend, direction) {
-      let constraint = skeleton2.pathConstraints[this.pathConstraintIndex];
+    apply(skeleton, lastTime2, time, firedEvents, alpha, blend, direction) {
+      let constraint = skeleton.pathConstraints[this.pathConstraintIndex];
       if (!constraint.active)
         return;
       let frames = this.frames;
@@ -2873,8 +2873,8 @@
       this.pathConstraintIndex = 0;
       this.pathConstraintIndex = pathConstraintIndex;
     }
-    apply(skeleton2, lastTime2, time, firedEvents, alpha, blend, direction) {
-      let constraint = skeleton2.pathConstraints[this.pathConstraintIndex];
+    apply(skeleton, lastTime2, time, firedEvents, alpha, blend, direction) {
+      let constraint = skeleton.pathConstraints[this.pathConstraintIndex];
       if (!constraint.active)
         return;
       let frames = this.frames;
@@ -2923,8 +2923,8 @@
         /*Y*/
       ] = mixY;
     }
-    apply(skeleton2, lastTime2, time, firedEvents, alpha, blend, direction) {
-      let constraint = skeleton2.pathConstraints[this.pathConstraintIndex];
+    apply(skeleton, lastTime2, time, firedEvents, alpha, blend, direction) {
+      let constraint = skeleton.pathConstraints[this.pathConstraintIndex];
       if (!constraint.active)
         return;
       let frames = this.frames;
@@ -3129,8 +3129,8 @@
     /** Poses the skeleton using the track entry animations. There are no side effects other than invoking listeners, so the
      * animation state can be applied to multiple skeletons to pose them identically.
      * @returns True if any animations were applied. */
-    apply(skeleton2) {
-      if (!skeleton2)
+    apply(skeleton) {
+      if (!skeleton)
         throw new Error("skeleton cannot be null.");
       if (this.animationsChanged)
         this._animationsChanged();
@@ -3145,7 +3145,7 @@
         let blend = i2 == 0 ? MixBlend.first : current.mixBlend;
         let mix = current.alpha;
         if (current.mixingFrom)
-          mix *= this.applyMixingFrom(current, skeleton2, blend);
+          mix *= this.applyMixingFrom(current, skeleton, blend);
         else if (current.trackTime >= current.trackEnd && !current.next)
           mix = 0;
         let animationLast = current.animationLast, animationTime = current.getAnimationTime(), applyTime = animationTime;
@@ -3161,9 +3161,9 @@
             Utils.webkit602BugfixHelper(mix, blend);
             var timeline = timelines[ii];
             if (timeline instanceof AttachmentTimeline)
-              this.applyAttachmentTimeline(timeline, skeleton2, applyTime, blend, true);
+              this.applyAttachmentTimeline(timeline, skeleton, applyTime, blend, true);
             else
-              timeline.apply(skeleton2, animationLast, applyTime, applyEvents, mix, blend, MixDirection.mixIn);
+              timeline.apply(skeleton, animationLast, applyTime, applyEvents, mix, blend, MixDirection.mixIn);
           }
         } else {
           let timelineMode = current.timelineMode;
@@ -3174,12 +3174,12 @@
             let timeline2 = timelines[ii];
             let timelineBlend = timelineMode[ii] == SUBSEQUENT ? blend : MixBlend.setup;
             if (timeline2 instanceof RotateTimeline) {
-              this.applyRotateTimeline(timeline2, skeleton2, applyTime, mix, timelineBlend, current.timelinesRotation, ii << 1, firstFrame);
+              this.applyRotateTimeline(timeline2, skeleton, applyTime, mix, timelineBlend, current.timelinesRotation, ii << 1, firstFrame);
             } else if (timeline2 instanceof AttachmentTimeline) {
-              this.applyAttachmentTimeline(timeline2, skeleton2, applyTime, blend, true);
+              this.applyAttachmentTimeline(timeline2, skeleton, applyTime, blend, true);
             } else {
               Utils.webkit602BugfixHelper(mix, blend);
-              timeline2.apply(skeleton2, animationLast, applyTime, applyEvents, mix, timelineBlend, MixDirection.mixIn);
+              timeline2.apply(skeleton, animationLast, applyTime, applyEvents, mix, timelineBlend, MixDirection.mixIn);
             }
           }
         }
@@ -3189,22 +3189,22 @@
         current.nextTrackLast = current.trackTime;
       }
       var setupState = this.unkeyedState + SETUP;
-      var slots = skeleton2.slots;
-      for (var i = 0, n = skeleton2.slots.length; i < n; i++) {
+      var slots = skeleton.slots;
+      for (var i = 0, n = skeleton.slots.length; i < n; i++) {
         var slot = slots[i];
         if (slot.attachmentState == setupState) {
           var attachmentName = slot.data.attachmentName;
-          slot.setAttachment(!attachmentName ? null : skeleton2.getAttachment(slot.data.index, attachmentName));
+          slot.setAttachment(!attachmentName ? null : skeleton.getAttachment(slot.data.index, attachmentName));
         }
       }
       this.unkeyedState += 2;
       this.queue.drain();
       return applied;
     }
-    applyMixingFrom(to, skeleton2, blend) {
+    applyMixingFrom(to, skeleton, blend) {
       let from = to.mixingFrom;
       if (from.mixingFrom)
-        this.applyMixingFrom(from, skeleton2, blend);
+        this.applyMixingFrom(from, skeleton, blend);
       let mix = 0;
       if (to.mixDuration == 0) {
         mix = 1;
@@ -3229,7 +3229,7 @@
         events = this.events;
       if (blend == MixBlend.add) {
         for (let i = 0; i < timelineCount; i++)
-          timelines[i].apply(skeleton2, animationLast, applyTime, events, alphaMix, blend, MixDirection.mixOut);
+          timelines[i].apply(skeleton, animationLast, applyTime, events, alphaMix, blend, MixDirection.mixOut);
       } else {
         let timelineMode = from.timelineMode;
         let timelineHoldMix = from.timelineHoldMix;
@@ -3269,14 +3269,14 @@
           }
           from.totalAlpha += alpha;
           if (timeline instanceof RotateTimeline)
-            this.applyRotateTimeline(timeline, skeleton2, applyTime, alpha, timelineBlend, from.timelinesRotation, i << 1, firstFrame);
+            this.applyRotateTimeline(timeline, skeleton, applyTime, alpha, timelineBlend, from.timelinesRotation, i << 1, firstFrame);
           else if (timeline instanceof AttachmentTimeline)
-            this.applyAttachmentTimeline(timeline, skeleton2, applyTime, timelineBlend, attachments);
+            this.applyAttachmentTimeline(timeline, skeleton, applyTime, timelineBlend, attachments);
           else {
             Utils.webkit602BugfixHelper(alpha, blend);
             if (drawOrder && timeline instanceof DrawOrderTimeline && timelineBlend == MixBlend.setup)
               direction = MixDirection.mixIn;
-            timeline.apply(skeleton2, animationLast, applyTime, events, alpha, timelineBlend, direction);
+            timeline.apply(skeleton, animationLast, applyTime, events, alpha, timelineBlend, direction);
           }
         }
       }
@@ -3287,31 +3287,31 @@
       from.nextTrackLast = from.trackTime;
       return mix;
     }
-    applyAttachmentTimeline(timeline, skeleton2, time, blend, attachments) {
-      var slot = skeleton2.slots[timeline.slotIndex];
+    applyAttachmentTimeline(timeline, skeleton, time, blend, attachments) {
+      var slot = skeleton.slots[timeline.slotIndex];
       if (!slot.bone.active)
         return;
       if (time < timeline.frames[0]) {
         if (blend == MixBlend.setup || blend == MixBlend.first)
-          this.setAttachment(skeleton2, slot, slot.data.attachmentName, attachments);
+          this.setAttachment(skeleton, slot, slot.data.attachmentName, attachments);
       } else
-        this.setAttachment(skeleton2, slot, timeline.attachmentNames[Timeline.search1(timeline.frames, time)], attachments);
+        this.setAttachment(skeleton, slot, timeline.attachmentNames[Timeline.search1(timeline.frames, time)], attachments);
       if (slot.attachmentState <= this.unkeyedState)
         slot.attachmentState = this.unkeyedState + SETUP;
     }
-    setAttachment(skeleton2, slot, attachmentName, attachments) {
-      slot.setAttachment(!attachmentName ? null : skeleton2.getAttachment(slot.data.index, attachmentName));
+    setAttachment(skeleton, slot, attachmentName, attachments) {
+      slot.setAttachment(!attachmentName ? null : skeleton.getAttachment(slot.data.index, attachmentName));
       if (attachments)
         slot.attachmentState = this.unkeyedState + CURRENT;
     }
-    applyRotateTimeline(timeline, skeleton2, time, alpha, blend, timelinesRotation, i, firstFrame) {
+    applyRotateTimeline(timeline, skeleton, time, alpha, blend, timelinesRotation, i, firstFrame) {
       if (firstFrame)
         timelinesRotation[i] = 0;
       if (alpha == 1) {
-        timeline.apply(skeleton2, 0, time, null, 1, blend, MixDirection.mixIn);
+        timeline.apply(skeleton, 0, time, null, 1, blend, MixDirection.mixIn);
         return;
       }
-      let bone = skeleton2.bones[timeline.boneIndex];
+      let bone = skeleton.bones[timeline.boneIndex];
       if (!bone.active)
         return;
       let frames = timeline.frames;
@@ -4654,7 +4654,7 @@
   // node_modules/@esotericsoftware/spine-core/dist/Bone.js
   var Bone = class {
     /** @param parent May be null. */
-    constructor(data, skeleton2, parent) {
+    constructor(data, skeleton, parent) {
       this.data = null;
       this.skeleton = null;
       this.parent = null;
@@ -4683,10 +4683,10 @@
       this.active = false;
       if (!data)
         throw new Error("data cannot be null.");
-      if (!skeleton2)
+      if (!skeleton)
         throw new Error("skeleton cannot be null.");
       this.data = data;
-      this.skeleton = skeleton2;
+      this.skeleton = skeleton;
       this.parent = parent;
       this.setToSetupPose();
     }
@@ -4720,16 +4720,16 @@
       this.ashearY = shearY;
       let parent = this.parent;
       if (!parent) {
-        let skeleton2 = this.skeleton;
+        let skeleton = this.skeleton;
         let rotationY = rotation + 90 + shearY;
-        let sx = skeleton2.scaleX;
-        let sy = skeleton2.scaleY;
+        let sx = skeleton.scaleX;
+        let sy = skeleton.scaleY;
         this.a = MathUtils.cosDeg(rotation + shearX) * scaleX * sx;
         this.b = MathUtils.cosDeg(rotationY) * scaleY * sx;
         this.c = MathUtils.sinDeg(rotation + shearX) * scaleX * sy;
         this.d = MathUtils.sinDeg(rotationY) * scaleY * sy;
-        this.worldX = x * sx + skeleton2.x;
-        this.worldY = y * sy + skeleton2.y;
+        this.worldX = x * sx + skeleton.x;
+        this.worldY = y * sy + skeleton.y;
         return;
       }
       let pa = parent.a, pb = parent.b, pc = parent.c, pd = parent.d;
@@ -4972,7 +4972,7 @@
 
   // node_modules/@esotericsoftware/spine-core/dist/IkConstraint.js
   var IkConstraint = class {
-    constructor(data, skeleton2) {
+    constructor(data, skeleton) {
       this.data = null;
       this.bones = null;
       this.target = null;
@@ -4984,7 +4984,7 @@
       this.active = false;
       if (!data)
         throw new Error("data cannot be null.");
-      if (!skeleton2)
+      if (!skeleton)
         throw new Error("skeleton cannot be null.");
       this.data = data;
       this.mix = data.mix;
@@ -4994,8 +4994,8 @@
       this.stretch = data.stretch;
       this.bones = new Array();
       for (let i = 0; i < data.bones.length; i++)
-        this.bones.push(skeleton2.findBone(data.bones[i].name));
-      this.target = skeleton2.findBone(data.target.name);
+        this.bones.push(skeleton.findBone(data.bones[i].name));
+      this.target = skeleton.findBone(data.target.name);
     }
     isActive() {
       return this.active;
@@ -5265,7 +5265,7 @@
 
   // node_modules/@esotericsoftware/spine-core/dist/PathConstraint.js
   var PathConstraint = class _PathConstraint {
-    constructor(data, skeleton2) {
+    constructor(data, skeleton) {
       this.data = null;
       this.bones = null;
       this.target = null;
@@ -5283,13 +5283,13 @@
       this.active = false;
       if (!data)
         throw new Error("data cannot be null.");
-      if (!skeleton2)
+      if (!skeleton)
         throw new Error("skeleton cannot be null.");
       this.data = data;
       this.bones = new Array();
       for (let i = 0, n = data.bones.length; i < n; i++)
-        this.bones.push(skeleton2.findBone(data.bones[i].name));
-      this.target = skeleton2.findSlot(data.target.name);
+        this.bones.push(skeleton.findBone(data.bones[i].name));
+      this.target = skeleton.findSlot(data.target.name);
       this.position = data.position;
       this.spacing = data.spacing;
       this.mixRotate = data.mixRotate;
@@ -5750,7 +5750,7 @@
 
   // node_modules/@esotericsoftware/spine-core/dist/TransformConstraint.js
   var TransformConstraint = class {
-    constructor(data, skeleton2) {
+    constructor(data, skeleton) {
       this.data = null;
       this.bones = null;
       this.target = null;
@@ -5764,7 +5764,7 @@
       this.active = false;
       if (!data)
         throw new Error("data cannot be null.");
-      if (!skeleton2)
+      if (!skeleton)
         throw new Error("skeleton cannot be null.");
       this.data = data;
       this.mixRotate = data.mixRotate;
@@ -5775,8 +5775,8 @@
       this.mixShearY = data.mixShearY;
       this.bones = new Array();
       for (let i = 0; i < data.bones.length; i++)
-        this.bones.push(skeleton2.findBone(data.bones[i].name));
-      this.target = skeleton2.findBone(data.target.name);
+        this.bones.push(skeleton.findBone(data.bones[i].name));
+      this.target = skeleton.findBone(data.target.name);
     }
     isActive() {
       return this.active;
@@ -6774,10 +6774,10 @@
       this.constraints.length = 0;
     }
     /** Attach each attachment in this skin if the corresponding attachment in the old skin is currently attached. */
-    attachAll(skeleton2, oldSkin) {
+    attachAll(skeleton, oldSkin) {
       let slotIndex = 0;
-      for (let i = 0; i < skeleton2.slots.length; i++) {
-        let slot = skeleton2.slots[i];
+      for (let i = 0; i < skeleton.slots.length; i++) {
+        let slot = skeleton.slots[i];
         let slotAttachment = slot.getAttachment();
         if (slotAttachment && slotIndex < oldSkin.attachments.length) {
           let dictionary = oldSkin.attachments[slotIndex];
@@ -7884,13 +7884,13 @@
      * box's polygon.
      * @param updateAabb If true, the axis aligned bounding box containing all the polygons is computed. If false, the
      *           SkeletonBounds AABB methods will always return true. */
-    update(skeleton2, updateAabb) {
-      if (!skeleton2)
+    update(skeleton, updateAabb) {
+      if (!skeleton)
         throw new Error("skeleton cannot be null.");
       let boundingBoxes = this.boundingBoxes;
       let polygons = this.polygons;
       let polygonPool = this.polygonPool;
-      let slots = skeleton2.slots;
+      let slots = skeleton.slots;
       let slotCount = slots.length;
       boundingBoxes.length = 0;
       polygonPool.freeAll(polygons);
@@ -9396,9 +9396,9 @@
       this.worldY = 0;
       this.radius = radius;
     }
-    begin(skeleton2) {
-      this.worldX = skeleton2.x + this.centerX;
-      this.worldY = skeleton2.y + this.centerY;
+    begin(skeleton) {
+      this.worldX = skeleton.x + this.centerX;
+      this.worldY = skeleton.y + this.centerY;
     }
     transform(position, uv, light, dark) {
       let radAngle = this.angle * MathUtils.degreesToRadians;
@@ -11063,13 +11063,13 @@
       this.vertices = Utils.newFloatArray(2 * 1024);
       this.context = context instanceof ManagedWebGLRenderingContext ? context : new ManagedWebGLRenderingContext(context);
     }
-    draw(shapes, skeleton2, ignoredBones = null) {
-      let skeletonX = skeleton2.x;
-      let skeletonY = skeleton2.y;
+    draw(shapes, skeleton, ignoredBones = null) {
+      let skeletonX = skeleton.x;
+      let skeletonY = skeleton.y;
       let gl2 = this.context.gl;
       let srcFunc = this.premultipliedAlpha ? gl2.ONE : gl2.SRC_ALPHA;
       shapes.setBlendMode(srcFunc, gl2.ONE, gl2.ONE_MINUS_SRC_ALPHA);
-      let bones = skeleton2.bones;
+      let bones = skeleton.bones;
       if (this.drawBones) {
         shapes.setColor(this.boneLineColor);
         for (let i = 0, n = bones.length; i < n; i++) {
@@ -11087,7 +11087,7 @@
       }
       if (this.drawRegionAttachments) {
         shapes.setColor(this.attachmentLineColor);
-        let slots = skeleton2.slots;
+        let slots = skeleton.slots;
         for (let i = 0, n = slots.length; i < n; i++) {
           let slot = slots[i];
           let attachment = slot.getAttachment();
@@ -11103,7 +11103,7 @@
         }
       }
       if (this.drawMeshHull || this.drawMeshTriangles) {
-        let slots = skeleton2.slots;
+        let slots = skeleton.slots;
         for (let i = 0, n = slots.length; i < n; i++) {
           let slot = slots[i];
           if (!slot.bone.active)
@@ -11149,7 +11149,7 @@
       }
       if (this.drawBoundingBoxes) {
         let bounds = this.bounds;
-        bounds.update(skeleton2, true);
+        bounds.update(skeleton, true);
         shapes.setColor(this.aabbColor);
         shapes.rect(false, bounds.minX, bounds.minY, bounds.getWidth(), bounds.getHeight());
         let polygons = bounds.polygons;
@@ -11161,7 +11161,7 @@
         }
       }
       if (this.drawPaths) {
-        let slots = skeleton2.slots;
+        let slots = skeleton.slots;
         for (let i = 0, n = slots.length; i < n; i++) {
           let slot = slots[i];
           if (!slot.bone.active)
@@ -11210,7 +11210,7 @@
         }
       }
       if (this.drawClipping) {
-        let slots = skeleton2.slots;
+        let slots = skeleton.slots;
         shapes.setColor(this.clipColor);
         for (let i = 0, n = slots.length; i < n; i++) {
           let slot = slots[i];
@@ -11266,7 +11266,7 @@
         this.vertexSize += 4;
       this.vertices = Utils.newFloatArray(this.vertexSize * 1024);
     }
-    draw(batcher, skeleton2, slotRangeStart = -1, slotRangeEnd = -1) {
+    draw(batcher, skeleton, slotRangeStart = -1, slotRangeEnd = -1) {
       let clipper = this.clipper;
       let premultipliedAlpha = this.premultipliedAlpha;
       let twoColorTint = this.twoColorTint;
@@ -11278,9 +11278,9 @@
       let renderable = this.renderable;
       let uvs = null;
       let triangles = null;
-      let drawOrder = skeleton2.drawOrder;
+      let drawOrder = skeleton.drawOrder;
       let attachmentColor = null;
-      let skeletonColor = skeleton2.color;
+      let skeletonColor = skeleton.color;
       let vertexSize = twoColorTint ? 12 : 8;
       let inRange = false;
       if (slotRangeStart == -1)
@@ -11558,15 +11558,15 @@
       this.camera.update();
       this.enableRenderer(this.batcher);
     }
-    drawSkeleton(skeleton2, premultipliedAlpha = false, slotRangeStart = -1, slotRangeEnd = -1) {
+    drawSkeleton(skeleton, premultipliedAlpha = false, slotRangeStart = -1, slotRangeEnd = -1) {
       this.enableRenderer(this.batcher);
       this.skeletonRenderer.premultipliedAlpha = premultipliedAlpha;
-      this.skeletonRenderer.draw(this.batcher, skeleton2, slotRangeStart, slotRangeEnd);
+      this.skeletonRenderer.draw(this.batcher, skeleton, slotRangeStart, slotRangeEnd);
     }
-    drawSkeletonDebug(skeleton2, premultipliedAlpha = false, ignoredBones = null) {
+    drawSkeletonDebug(skeleton, premultipliedAlpha = false, ignoredBones = null) {
       this.enableRenderer(this.shapes);
       this.skeletonDebugRenderer.premultipliedAlpha = premultipliedAlpha;
-      this.skeletonDebugRenderer.draw(this.shapes, skeleton2, ignoredBones);
+      this.skeletonDebugRenderer.draw(this.shapes, skeleton, ignoredBones);
     }
     drawTexture(texture, x, y, width, height, color = null) {
       this.enableRenderer(this.batcher);
@@ -11986,9 +11986,13 @@
   var renderer = new SceneRenderer(canvas, gl);
   new CameraController(canvas, renderer.camera);
   var charKeys = [];
-  var selectedKey = "";
+  var MAX_LAYERS = 2;
+  var layers = [];
+  var loadingKey = "";
+  var overlayMode = false;
   var charSearch = $("char-search");
   var charList = $("char-list");
+  var overlayCheck = $("overlay-check");
   function makeCharEmpty(text) {
     const el = document.createElement("div");
     el.className = "char-empty";
@@ -11996,8 +12000,10 @@
     return el;
   }
   function setCharOptions(keys) {
+    for (const layer of layers) disposeLayer(layer);
+    layers = [];
+    loadingKey = "";
     charKeys = keys.slice().sort();
-    selectedKey = "";
     charSearch.value = "";
     if (charKeys.length === 0) {
       charSearch.disabled = true;
@@ -12007,6 +12013,9 @@
       charSearch.placeholder = "\u8F93\u5165\u5173\u952E\u5B57\u641C\u7D22\u89D2\u8272\u2026\u2026";
     }
     renderCharList();
+  }
+  function layerIndexOf(key) {
+    return layers.findIndex((l) => l.key === key);
   }
   function renderCharList() {
     const lower = charSearch.value.trim().toLowerCase();
@@ -12021,31 +12030,115 @@
       return;
     }
     for (const key of keys) {
-      const item = document.createElement("div");
-      item.className = "char-item" + (key === selectedKey ? " selected" : "");
+      const idx = layerIndexOf(key);
+      const item = document.createElement("label");
+      item.className = "char-item" + (idx !== -1 ? " selected" : "");
       item.dataset.key = key;
-      item.textContent = key;
+      if (overlayMode) {
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = idx !== -1;
+        if (loadingKey && loadingKey !== key) cb.disabled = true;
+        item.appendChild(cb);
+      }
+      const text = document.createElement("span");
+      text.className = "char-name";
+      text.textContent = key;
+      item.appendChild(text);
+      if (idx !== -1) {
+        const tag = document.createElement("span");
+        tag.className = "layer-tag";
+        tag.textContent = overlayMode ? idx === 0 ? "\u4E3B\u5C42" : "\u53E0\u52A0" : "\u5F53\u524D";
+        item.appendChild(tag);
+      } else if (loadingKey === key) {
+        const tag = document.createElement("span");
+        tag.className = "layer-tag";
+        tag.textContent = "\u52A0\u8F7D\u4E2D\u2026";
+        item.appendChild(tag);
+      }
       charList.appendChild(item);
     }
   }
-  function chooseChar(key) {
-    if (!charKeys.includes(key) || key === selectedKey) return;
-    selectedKey = key;
-    charList.querySelectorAll(".char-item").forEach(
-      (el) => el.classList.toggle("selected", el.dataset.key === key)
-    );
-    return loadGroup(key);
+  async function toggleLayer(key) {
+    if (loadingKey) return;
+    if (layerIndexOf(key) !== -1) {
+      const idx = layerIndexOf(key);
+      const [removed] = layers.splice(idx, 1);
+      disposeLayer(removed);
+      afterLayersChanged();
+      renderCharList();
+      return;
+    }
+    if (layers.length >= MAX_LAYERS) {
+      setStatus(`\u6700\u591A\u540C\u65F6\u53E0\u52A0 ${MAX_LAYERS} \u4E2A\u89D2\u8272\uFF0C\u8BF7\u5148\u53D6\u6D88\u4E00\u4E2A\u56FE\u5C42`, true);
+      renderCharList();
+      return;
+    }
+    loadingKey = key;
+    renderCharList();
+    try {
+      const layer = await loadLayer(key);
+      if (layer) layers.push(layer);
+      afterLayersChanged();
+    } catch (e) {
+      setStatus(`\u52A0\u8F7D\u5931\u8D25: ${e.message ?? e}`, true);
+    } finally {
+      loadingKey = "";
+      renderCharList();
+    }
   }
+  async function selectSingle(key) {
+    if (loadingKey) return;
+    if (layers.length === 1 && layers[0].key === key) return;
+    loadingKey = key;
+    renderCharList();
+    try {
+      const layer = await loadLayer(key);
+      if (layer) {
+        for (const l of layers) disposeLayer(l);
+        layers = [layer];
+        afterLayersChanged();
+      }
+    } catch (e) {
+      setStatus(`\u52A0\u8F7D\u5931\u8D25: ${e.message ?? e}`, true);
+    } finally {
+      loadingKey = "";
+      renderCharList();
+    }
+  }
+  charList.addEventListener("change", (e) => {
+    if (!overlayMode) return;
+    if (e.target.matches('input[type="checkbox"]')) {
+      const item = e.target.closest(".char-item");
+      if (item) toggleLayer(item.dataset.key);
+    }
+  });
   charList.addEventListener("click", (e) => {
+    if (overlayMode) return;
     const item = e.target.closest(".char-item");
-    if (item) chooseChar(item.dataset.key);
+    if (item) selectSingle(item.dataset.key);
+  });
+  overlayCheck.addEventListener("change", () => {
+    overlayMode = overlayCheck.checked;
+    if (!overlayMode && layers.length > 1) {
+      for (const l of layers.slice(1)) disposeLayer(l);
+      layers = layers.slice(0, 1);
+    }
+    if (layers.length > 0) updateLayerStatus();
+    renderCharList();
   });
   charSearch.addEventListener("input", renderCharList);
   charSearch.addEventListener("keydown", (e) => {
     if (e.key !== "Enter") return;
     e.preventDefault();
     const first = charList.querySelector(".char-item");
-    if (first) chooseChar(first.dataset.key);
+    if (!first) return;
+    const key = first.dataset.key;
+    if (overlayMode) {
+      if (layerIndexOf(key) === -1) toggleLayer(key);
+    } else {
+      selectSingle(key);
+    }
   });
   var groups = /* @__PURE__ */ new Map();
   var imagePool = /* @__PURE__ */ new Map();
@@ -12130,66 +12223,83 @@
       `\u5DF2\u52A0\u8F7D ${usable.length} \u4E2A\u89D2\u8272\u3001${imagePool.size} \u5F20\u8D34\u56FE` + (incomplete ? `\uFF08${incomplete} \u7EC4\u4E0D\u5B8C\u6574\u5DF2\u8DF3\u8FC7\uFF09` : "")
     );
     dropHint.style.display = "none";
-    await chooseChar(usable[0].key);
+    if (overlayMode) await toggleLayer(usable[0].key);
+    else await selectSingle(usable[0].key);
   }
-  var currentAtlas = null;
-  var skeleton = null;
-  var state = null;
   var debugDraw = false;
   var speed = 1;
-  function disposeCurrent() {
-    if (currentAtlas) {
-      try {
-        currentAtlas.dispose();
-      } catch {
-      }
-      currentAtlas = null;
-    }
-    skeleton = null;
-    state = null;
-  }
-  async function loadGroup(key) {
-    const g = groups.get(key);
-    if (!g) return;
-    setStatus(`\u6B63\u5728\u52A0\u8F7D ${key} \u2026\u2026`);
+  function disposeLayer(layer) {
     try {
-      disposeCurrent();
-      const atlasText = await g.atlasFile.text();
-      const atlas = new TextureAtlas(atlasText);
-      for (const page of atlas.pages) {
-        const pageBase = baseName(page.name).toLowerCase();
-        const file = imagePool.get(pageBase);
-        if (!file) {
-          throw new Error(`\u7F3A\u5C11\u8D34\u56FE ${page.name}\uFF0C\u8BF7\u628A\u5BF9\u5E94 png \u4E00\u8D77\u62D6\u5165`);
-        }
-        const bmp = await createImageBitmap(file);
-        page.setTexture(new GLTexture(gl, bmp, false));
-      }
-      const attachmentLoader = new AtlasAttachmentLoader(atlas);
-      let data;
-      if (g.skelFile) {
-        const bytes = new Uint8Array(await g.skelFile.arrayBuffer());
-        data = new SkeletonBinary(attachmentLoader).readSkeletonData(bytes);
-      } else {
-        const json = JSON.parse(await g.jsonFile.text());
-        data = new SkeletonJson(attachmentLoader).readSkeletonData(json);
-      }
-      currentAtlas = atlas;
-      skeleton = new Skeleton(data);
-      state = new AnimationState(new AnimationStateData(data));
-      skeleton.setToSetupPose();
-      skeleton.updateWorldTransform();
-      populateAnimations(data);
-      populateSkins(data);
-      fitCamera();
-      setStatus(
-        `${key}
-bones=${data.bones.length} slots=${data.slots.length} anims=${data.animations.length} skins=${data.skins.length}` + (g.skelFile ? `
-\u683C\u5F0F: \u4E8C\u8FDB\u5236 ${data.version ?? ""}` : "\n\u683C\u5F0F: JSON")
-      );
-    } catch (e) {
-      setStatus(`\u52A0\u8F7D\u5931\u8D25: ${e.message ?? e}`, true);
+      layer.atlas.dispose();
+    } catch {
     }
+  }
+  async function loadLayer(key) {
+    const g = groups.get(key);
+    if (!g) return null;
+    setStatus(`\u6B63\u5728\u52A0\u8F7D ${key} \u2026\u2026`);
+    const atlasText = await g.atlasFile.text();
+    const atlas = new TextureAtlas(atlasText);
+    for (const page of atlas.pages) {
+      const pageBase = baseName(page.name).toLowerCase();
+      const file = imagePool.get(pageBase);
+      if (!file) {
+        try {
+          atlas.dispose();
+        } catch {
+        }
+        throw new Error(`\u7F3A\u5C11\u8D34\u56FE ${page.name}\uFF0C\u8BF7\u628A\u5BF9\u5E94 png \u4E00\u8D77\u62D6\u5165`);
+      }
+      const bmp = await createImageBitmap(file);
+      page.setTexture(new GLTexture(gl, bmp, false));
+    }
+    const attachmentLoader = new AtlasAttachmentLoader(atlas);
+    let data;
+    if (g.skelFile) {
+      const bytes = new Uint8Array(await g.skelFile.arrayBuffer());
+      data = new SkeletonBinary(attachmentLoader).readSkeletonData(bytes);
+    } else {
+      const json = JSON.parse(await g.jsonFile.text());
+      data = new SkeletonJson(attachmentLoader).readSkeletonData(json);
+    }
+    const skeleton = new Skeleton(data);
+    const state = new AnimationState(new AnimationStateData(data));
+    state.timeScale = speed;
+    skeleton.setToSetupPose();
+    skeleton.updateWorldTransform();
+    return { key, atlas, data, skeleton, state };
+  }
+  function afterLayersChanged() {
+    if (layers.length === 0) {
+      animSelect.innerHTML = "<option>\u2014</option>";
+      skinSelect.innerHTML = "<option>\u2014</option>";
+      animSelect.disabled = true;
+      skinSelect.disabled = true;
+      setStatus("\u672A\u9009\u62E9\u89D2\u8272");
+      return;
+    }
+    populateAnimations(layers[0].data);
+    populateSkins(layers[0].data);
+    fitCamera();
+    updateLayerStatus();
+  }
+  function updateLayerStatus() {
+    if (!overlayMode) {
+      const l = layers[0];
+      const d = l.data;
+      setStatus(
+        `${l.key}
+bones=${d.bones.length} slots=${d.slots.length} anims=${d.animations.length} skins=${d.skins.length}`
+      );
+      return;
+    }
+    const desc = layers.map((l, i) => {
+      const d = l.data;
+      const tag = i === 0 ? "\u4E3B\u5C42" : "\u53E0\u52A0";
+      return `${tag} ${l.key} bones=${d.bones.length} anims=${d.animations.length}`;
+    }).join("\n");
+    setStatus(`\u5DF2\u53E0\u52A0 ${layers.length}/${MAX_LAYERS} \u5C42
+${desc}`);
   }
   function populateAnimations(data) {
     animSelect.innerHTML = "";
@@ -12226,11 +12336,17 @@ bones=${data.bones.length} slots=${data.slots.length} anims=${data.animations.le
     skinSelect.value = names.includes("default") ? "default" : "__none__";
   }
   function playAnimation(name) {
-    if (!state || !name) return;
-    state.setAnimation(0, name, loopCheck.checked);
+    if (!name) return;
+    for (const layer of layers) {
+      const has = layer.data.animations.some((a) => a.name === name);
+      if (has) layer.state.setAnimation(0, name, loopCheck.checked);
+      else layer.state.setEmptyAnimation(0, 0);
+    }
   }
   function fitCamera() {
-    if (!skeleton) return;
+    if (layers.length === 0) return;
+    const skeleton = layers[0].skeleton;
+    const state = layers[0].state;
     skeleton.setToSetupPose();
     state?.apply(skeleton);
     skeleton.updateWorldTransform();
@@ -12251,13 +12367,17 @@ bones=${data.bones.length} slots=${data.slots.length} anims=${data.animations.le
     renderer.resize(ResizeMode.Expand);
     gl.clearColor(0.118, 0.118, 0.133, 1);
     renderer.camera.update();
-    if (skeleton && state) {
-      state.update(dt * speed);
-      state.apply(skeleton);
-      skeleton.updateWorldTransform();
+    if (layers.length > 0) {
+      for (const layer of layers) {
+        layer.state.update(dt * speed);
+        layer.state.apply(layer.skeleton);
+        layer.skeleton.updateWorldTransform();
+      }
       renderer.begin();
-      renderer.drawSkeleton(skeleton, true);
-      if (debugDraw) renderer.drawSkeletonDebug(skeleton, true);
+      for (const layer of layers) {
+        renderer.drawSkeleton(layer.skeleton, true);
+        if (debugDraw) renderer.drawSkeletonDebug(layer.skeleton, true);
+      }
       renderer.end();
     }
     requestAnimationFrame(frame);
@@ -12265,19 +12385,23 @@ bones=${data.bones.length} slots=${data.slots.length} anims=${data.animations.le
   requestAnimationFrame(frame);
   animSelect.addEventListener("change", () => playAnimation(animSelect.value));
   loopCheck.addEventListener("change", () => {
-    if (state && animSelect.value) playAnimation(animSelect.value);
+    if (layers.length > 0 && animSelect.value) playAnimation(animSelect.value);
   });
   skinSelect.addEventListener("change", () => {
-    if (!skeleton) return;
-    if (skinSelect.value === "__none__") skeleton.setSkin(null);
-    else skeleton.setSkinByName(skinSelect.value);
-    skeleton.setSlotsToSetupPose();
-    state?.apply(skeleton);
+    const name = skinSelect.value;
+    for (const layer of layers) {
+      const has = layer.data.skins.some((s) => s.name === name);
+      if (name === "__none__") layer.skeleton.setSkin(null);
+      else if (has) layer.skeleton.setSkinByName(name);
+      else continue;
+      layer.skeleton.setSlotsToSetupPose();
+      layer.state.apply(layer.skeleton);
+    }
   });
   speedRange.addEventListener("input", () => {
     speed = parseFloat(speedRange.value);
     speedVal.textContent = speed.toFixed(2) + "x";
-    if (state) state.timeScale = speed;
+    for (const layer of layers) layer.state.timeScale = speed;
   });
   debugCheck.addEventListener("change", () => {
     debugDraw = debugCheck.checked;

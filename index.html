@@ -94,17 +94,37 @@
     border-radius: 4px;
   }
   .char-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     padding: 6px 10px;
     font-size: 12px;
     cursor: pointer;
     color: #d8d8de;
+  }
+  .char-item input[type="checkbox"] {
+    margin: 0;
+    accent-color: #3a6ea5;
+    cursor: pointer;
+    flex: none;
+  }
+  .char-item .char-name {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .char-item .layer-tag {
+    margin-left: auto;
+    flex: none;
+    font-size: 10px;
+    color: #8fce8f;
+    border: 1px solid #4a7a4a;
+    border-radius: 3px;
+    padding: 0 4px;
+  }
   .char-item:hover { background: #2f4a63; color: #fff; }
   .char-item.selected { background: #3a6ea5; color: #fff; }
-  .char-item.selected::after { content: " ✓"; }
+  .char-item.selected .layer-tag { color: #fff; border-color: rgba(255,255,255,0.6); }
   .char-empty { padding: 10px; font-size: 11px; color: #777; text-align: center; }
 </style>
 </head>
@@ -125,6 +145,7 @@
       <label>搜索角色</label>
       <input type="text" id="char-search" placeholder="未加载资源" disabled autocomplete="off" spellcheck="false">
       <label>角色</label>
+      <label class="check"><input type="checkbox" id="overlay-check"> 叠加模式（勾选最多 2 个同位置叠加；关闭时点击即切换单个角色）</label>
       <div class="char-list" id="char-list">
         <div class="char-empty">拖入资源后显示角色</div>
       </div>
