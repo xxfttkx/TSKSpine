@@ -5,7 +5,7 @@
 工具链分两部分：
 
 - **提取**（[extract_spine.py](./extract_spine.py)）：Python + UnityPy，扫描 Addressables 缓存与 StreamingAssets，按内容特征识别 Spine 三件套并导出贴图。
-- **预览**（[viewer.js](./viewer.js) + [index.html](./index.html)）：纯前端页面，spine-webgl 4.3 渲染，esbuild 打包。拖入导出的资源即可播放动画。
+- **预览**（[viewer.js](./viewer.js) + [index.html](./index.html)）：纯前端页面，spine-webgl 4.0 渲染，esbuild 打包。拖入导出的资源即可播放动画。
 
 ## 功能
 
@@ -13,6 +13,7 @@
 - 只解析命中 Spine 的 bundle，绕开 AssetStudio 的 shader 兼容问题
 - 导出 `manifest.csv` 清单，记录 bundle、资源类型、文件名与 spine 版本号
 - 预览器支持：
+  - 启动即自动加载 `test/` 示例角色（服务器扫描目录生成清单，新增文件实时生效），开箱即看；拖入自己的资源即替换
   - 拖入文件 / 整个文件夹，自动按文件名分组配对
   - 角色选择为**独立搜索框 + 常驻列表**：搜索框只负责关键字过滤（大小写不敏感），回车选中第一个匹配项
   - 默认为**单选模式**：点击列表项即互斥切换角色，只预览一个；勾选"叠加模式"开关后变为多选
@@ -75,7 +76,7 @@ npm install
 npm start
 ```
 
-打开 http://localhost:8080/ ，把 `spine_dump` 里的角色目录**整个拖进页面**（或点"选择文件夹"），即可自动分组播放。
+打开 http://localhost:8080/ ，页面会**自动加载 `test/` 目录中的示例角色**（服务器启动时扫描目录生成清单，新增文件实时生效）；把 `spine_dump` 里的角色目录**整个拖进页面**（或点"选择文件夹"）即可加载自己提取的资源。
 
 也可以只构建不启动服务器：
 
@@ -127,6 +128,7 @@ TSKSpine/
 ├── viewer.js             # 预览器源码（esbuild 入口）
 ├── viewer.bundle.js      # 打包产物（由 npm run build 生成）
 ├── serve.mjs             # esbuild 本地服务器脚本
+├── test/                 # 示例 Spine 资源（启动预览器自动加载）
 ├── package.json
 └── spine_dump/           # 提取输出目录（运行脚本后生成）
 ```

@@ -287,7 +287,8 @@ function ingestFile(file) {
   return null;
 }
 
-async function ingestFiles(fileList) {
+// label：资源来源描述（如 "test/"），用于状态栏提示；手动拖入时留空
+async function ingestFiles(fileList, label = "") {
   groups.clear();
   imagePool.clear();
   let touched = 0;
@@ -311,7 +312,7 @@ async function ingestFiles(fileList) {
   }
   setCharOptions(usable.map((g) => g.key));
   setStatus(
-    `已加载 ${usable.length} 个角色、${imagePool.size} 张贴图` +
+    `${label ? `已从 ${label} 自动加载 ` : "已加载 "}${usable.length} 个角色、${imagePool.size} 张贴图` +
       (incomplete ? `（${incomplete} 组不完整已跳过）` : ""),
   );
   dropHint.style.display = "none";
@@ -573,3 +574,24 @@ window.addEventListener("drop", (e) => {
   wrap.classList.remove("dragover");
   if (e.dataTransfer?.files?.length) ingestFiles(e.dataTransfer.files);
 });
+
+// ---------- 启动时自动加载 test/ 示例资源 ----------
+// serve.mjs 启动时会扫描 test/ 目录生成 .test-manifest.json；
+// 通过 file:// 直接打开页面或清单不存在时静默跳过，仍可手动拖入。
+async function autoLoadTest() {
+  try {
+    const r = await fetch("./.test-manifest.json", { cache: "no-store" });
+    if (!r.ok) return;
+    const { dir, files } = await r.json();
+    const loaded = [];
+    for (const name of files) {
+      const resp = await fetch(`${dir}/${name}`);
+      if (!resp.ok) continue;
+      loaded.push(new File([await resp.blob()], name));
+    }
+    if (loaded.length > 0) await ingestFiles(loaded, `${dir}/`);
+  } catch {
+    /* 非 HTTP 环境或无 test 目录，忽略 */
+  }
+}
+autoLoadTest();

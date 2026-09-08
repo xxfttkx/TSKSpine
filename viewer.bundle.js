@@ -12204,7 +12204,7 @@
     }
     return null;
   }
-  async function ingestFiles(fileList) {
+  async function ingestFiles(fileList, label = "") {
     groups.clear();
     imagePool.clear();
     let touched = 0;
@@ -12227,7 +12227,7 @@
     }
     setCharOptions(usable.map((g) => g.key));
     setStatus(
-      `\u5DF2\u52A0\u8F7D ${usable.length} \u4E2A\u89D2\u8272\u3001${imagePool.size} \u5F20\u8D34\u56FE` + (incomplete ? `\uFF08${incomplete} \u7EC4\u4E0D\u5B8C\u6574\u5DF2\u8DF3\u8FC7\uFF09` : "")
+      `${label ? `\u5DF2\u4ECE ${label} \u81EA\u52A8\u52A0\u8F7D ` : "\u5DF2\u52A0\u8F7D "}${usable.length} \u4E2A\u89D2\u8272\u3001${imagePool.size} \u5F20\u8D34\u56FE` + (incomplete ? `\uFF08${incomplete} \u7EC4\u4E0D\u5B8C\u6574\u5DF2\u8DF3\u8FC7\uFF09` : "")
     );
     dropHint.style.display = "none";
     if (overlayMode) await toggleLayer(usable[0].key);
@@ -12454,4 +12454,20 @@ ${desc}`);
     wrap.classList.remove("dragover");
     if (e.dataTransfer?.files?.length) ingestFiles(e.dataTransfer.files);
   });
+  async function autoLoadTest() {
+    try {
+      const r = await fetch("./.test-manifest.json", { cache: "no-store" });
+      if (!r.ok) return;
+      const { dir, files } = await r.json();
+      const loaded = [];
+      for (const name of files) {
+        const resp = await fetch(`${dir}/${name}`);
+        if (!resp.ok) continue;
+        loaded.push(new File([await resp.blob()], name));
+      }
+      if (loaded.length > 0) await ingestFiles(loaded, `${dir}/`);
+    } catch {
+    }
+  }
+  autoLoadTest();
 })();
