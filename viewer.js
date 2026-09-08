@@ -10,7 +10,14 @@ const wrap = $("canvas-wrap");
 const dropHint = $("drop-hint");
 const animSelect = $("anim-select");
 const skinSelect = $("skin-select");
+const animSelect1 = $("anim-select-1");
+const skinSelect1 = $("skin-select-1");
+const layerPanel1 = $("layer-panel-1");
+const layerTitle0 = $("layer-title-0");
 const loopCheck = $("loop-check");
+// 按层索引访问的两组下拉：0 = 主层，1 = 叠加层
+const animSelects = [animSelect, animSelect1];
+const skinSelects = [skinSelect, skinSelect1];
 const speedRange = $("speed-range");
 const speedVal = $("speed-val");
 const debugCheck = $("debug-check");
@@ -195,6 +202,7 @@ overlayCheck.addEventListener("change", () => {
     for (const l of layers.slice(1)) disposeLayer(l);
     layers = layers.slice(0, 1);
   }
+  syncLayerControls();
   if (layers.length > 0) updateLayerStatus();
   renderCharList();
 });
@@ -358,20 +366,101 @@ async function loadLayer(key) {
   return { key, atlas, data, skeleton, state };
 }
 
-// 图层增减后的统一收尾：控件以主层为准，动画同名同步
+// 每组控件当前已填充的 layer key，未变化则不重填（避免打断正在播放的动画）
+const ctrlKey = ["", ""];
+
 function afterLayersChanged() {
+  syncLayerControls();
   if (layers.length === 0) {
-    animSelect.innerHTML = "<option>—</option>";
-    skinSelect.innerHTML = "<option>—</option>";
-    animSelect.disabled = true;
-    skinSelect.disabled = true;
     setStatus("未选择角色");
     return;
   }
-  populateAnimations(layers[0].data);
-  populateSkins(layers[0].data);
   fitCamera();
   updateLayerStatus();
+}
+
+// 按当前 layers 与模式刷新两组动画/皮肤控件的显隐与内容
+function syncLayerControls() {
+  const showOverlay = overlayMode && layers.length >= 2;
+  layerPanel1.hidden = !showOverlay; // 叠加层面板只在叠加模式且有第 2 层时出现
+  layerTitle0.hidden = !overlayMode; // 单选时不显示"主层"标题
+
+  for (let i = 0; i < 2; i++) {
+    const layer = layers[i];
+    const animSel = animSelects[i];
+    const skinSel = skinSelects[i];
+    const active = !!layer && (i === 0 || showOverlay);
+    if (!active) {
+      ctrlKey[i] = "";
+      animSel.innerHTML = "<option>—</option>";
+      skinSel.innerHTML = "<option>—</option>";
+      animSel.disabled = true;
+      skinSel.disabled = true;
+      continue;
+    }
+    // 该槽位的角色变了才重新填充（新层播默认动画）；没变则保留用户选择
+    if (ctrlKey[i] !== layer.key) {
+      ctrlKey[i] = layer.key;
+      fillAnimations(animSel, layer);
+      fillSkins(skinSel, layer);
+    }
+  }
+}
+
+function fillAnimations(sel, layer) {
+  sel.innerHTML = "";
+  const names = layer.data.animations.map((a) => a.name).sort();
+  for (const name of names) {
+    const opt = document.createElement("option");
+    opt.value = name;
+    opt.textContent = name;
+    sel.appendChild(opt);
+  }
+  sel.disabled = names.length === 0;
+  // 默认优先 wait/idle，否则第一个
+  const preferred = names.find((n) => /wait|idle/i.test(n)) ?? names[0];
+  if (preferred) {
+    sel.value = preferred;
+    playLayerAnim(layer, preferred);
+  }
+}
+
+function fillSkins(sel, layer) {
+  sel.innerHTML = "";
+  const names = layer.data.skins.map((s) => s.name);
+  if (!names.includes("default")) {
+    const opt = document.createElement("option");
+    opt.value = "__none__";
+    opt.textContent = "default";
+    sel.appendChild(opt);
+  }
+  for (const name of names) {
+    const opt = document.createElement("option");
+    opt.value = name;
+    opt.textContent = name;
+    sel.appendChild(opt);
+  }
+  sel.disabled = false;
+  sel.value = names.includes("default") ? "default" : "__none__";
+}
+
+// 播放指定层的某个动画；该层无此动画则清空 track（停在 setup pose）
+function playLayerAnim(layer, name) {
+  if (!layer || !name) return;
+  if (layer.data.animations.some((a) => a.name === name)) {
+    layer.state.setAnimation(0, name, loopCheck.checked);
+  } else {
+    layer.state.setEmptyAnimation(0, 0);
+  }
+}
+
+// 切换指定层的皮肤
+function setLayerSkin(layer, name) {
+  if (!layer) return;
+  if (name === "__none__") layer.skeleton.setSkin(null);
+  else layer.skeleton.setSkinByName(name);
+  layer.skeleton.setSlotsToSetupPose();
+  layer.state.apply(layer.skeleton);
 }
 
 function updateLayerStatus() {
@@ -392,53 +481,6 @@ function updateLayerStatus() {
     })
     .join("\n");
   setStatus(`已叠加 ${layers.length}/${MAX_LAYERS} 层\n${desc}`);
-}
-
-function populateAnimations(data) {
-  animSelect.innerHTML = "";
-  const names = data.animations.map((a) => a.name).sort();
-  for (const name of names) {
-    const opt = document.createElement("option");
-    opt.value = name;
-    opt.textContent = name;
-    animSelect.appendChild(opt);
-  }
-  animSelect.disabled = names.length === 0;
-  // 默认优先 wait/idle，否则第一个
-  const preferred = names.find((n) => /wait|idle/i.test(n)) ?? names[0];
-  if (preferred) {
-    animSelect.value = preferred;
-    playAnimation(preferred);
-  }
-}
-
-function populateSkins(data) {
-  skinSelect.innerHTML = "";
-  const names = data.skins.map((s) => s.name);
-  if (!names.includes("default")) {
-    const opt = document.createElement("option");
-    opt.value = "__none__";
-    opt.textContent = "default";
-    skinSelect.appendChild(opt);
-  }
-  for (const name of names) {
-    const opt = document.createElement("option");
-    opt.value = name;
-    opt.textContent = name;
-    skinSelect.appendChild(opt);
-  }
-  skinSelect.disabled = false;
-  skinSelect.value = names.includes("default") ? "default" : "__none__";
-}
-
-// 所有层同步播放同名动画；某层没有该动画则清空 track（停在 setup pose）
-function playAnimation(name) {
-  if (!name) return;
-  for (const layer of layers) {
-    const has = layer.data.animations.some((a) => a.name === name);
-    if (has) layer.state.setAnimation(0, name, loopCheck.checked);
-    else layer.state.setEmptyAnimation(0, 0);
-  }
 }
 
 function fitCamera() {
@@ -489,21 +531,18 @@ function frame() {
 requestAnimationFrame(frame);
 
 // ---------- UI 事件 ----------
-animSelect.addEventListener("change", () => playAnimation(animSelect.value));
+// 两组动画/皮肤下拉各自只控制对应层
+animSelect.addEventListener("change", () => playLayerAnim(layers[0], animSelect.value));
+animSelect1.addEventListener("change", () => playLayerAnim(layers[1], animSelect1.value));
+skinSelect.addEventListener("change", () => setLayerSkin(layers[0], skinSelect.value));
+skinSelect1.addEventListener("change", () => setLayerSkin(layers[1], skinSelect1.value));
+// 循环对所有层生效：用各组下拉当前动画重新播放
 loopCheck.addEventListener("change", () => {
-  if (layers.length > 0 && animSelect.value) playAnimation(animSelect.value);
-});
-skinSelect.addEventListener("change", () => {
-  const name = skinSelect.value;
-  for (const layer of layers) {
-    const has = layer.data.skins.some((s) => s.name === name);
-    // 只对拥有该皮肤名的层切换，其余层保持原皮肤
-    if (name === "__none__") layer.skeleton.setSkin(null);
-    else if (has) layer.skeleton.setSkinByName(name);
-    else continue;
-    layer.skeleton.setSlotsToSetupPose();
-    layer.state.apply(layer.skeleton);
-  }
+  animSelects.forEach((sel, i) => {
+    if (layers[i] && sel.value && sel.value !== "—") {
+      playLayerAnim(layers[i], sel.value);
+    }
+  });
 });
 speedRange.addEventListener("input", () => {
   speed = parseFloat(speedRange.value);

@@ -11965,7 +11965,13 @@
   var dropHint = $("drop-hint");
   var animSelect = $("anim-select");
   var skinSelect = $("skin-select");
+  var animSelect1 = $("anim-select-1");
+  var skinSelect1 = $("skin-select-1");
+  var layerPanel1 = $("layer-panel-1");
+  var layerTitle0 = $("layer-title-0");
   var loopCheck = $("loop-check");
+  var animSelects = [animSelect, animSelect1];
+  var skinSelects = [skinSelect, skinSelect1];
   var speedRange = $("speed-range");
   var speedVal = $("speed-val");
   var debugCheck = $("debug-check");
@@ -12124,6 +12130,7 @@
       for (const l of layers.slice(1)) disposeLayer(l);
       layers = layers.slice(0, 1);
     }
+    syncLayerControls();
     if (layers.length > 0) updateLayerStatus();
     renderCharList();
   });
@@ -12269,19 +12276,88 @@
     skeleton.updateWorldTransform();
     return { key, atlas, data, skeleton, state };
   }
+  var ctrlKey = ["", ""];
   function afterLayersChanged() {
+    syncLayerControls();
     if (layers.length === 0) {
-      animSelect.innerHTML = "<option>\u2014</option>";
-      skinSelect.innerHTML = "<option>\u2014</option>";
-      animSelect.disabled = true;
-      skinSelect.disabled = true;
       setStatus("\u672A\u9009\u62E9\u89D2\u8272");
       return;
     }
-    populateAnimations(layers[0].data);
-    populateSkins(layers[0].data);
     fitCamera();
     updateLayerStatus();
+  }
+  function syncLayerControls() {
+    const showOverlay = overlayMode && layers.length >= 2;
+    layerPanel1.hidden = !showOverlay;
+    layerTitle0.hidden = !overlayMode;
+    for (let i = 0; i < 2; i++) {
+      const layer = layers[i];
+      const animSel = animSelects[i];
+      const skinSel = skinSelects[i];
+      const active = !!layer && (i === 0 || showOverlay);
+      if (!active) {
+        ctrlKey[i] = "";
+        animSel.innerHTML = "<option>\u2014</option>";
+        skinSel.innerHTML = "<option>\u2014</option>";
+        animSel.disabled = true;
+        skinSel.disabled = true;
+        continue;
+      }
+      if (ctrlKey[i] !== layer.key) {
+        ctrlKey[i] = layer.key;
+        fillAnimations(animSel, layer);
+        fillSkins(skinSel, layer);
+      }
+    }
+  }
+  function fillAnimations(sel, layer) {
+    sel.innerHTML = "";
+    const names = layer.data.animations.map((a) => a.name).sort();
+    for (const name of names) {
+      const opt = document.createElement("option");
+      opt.value = name;
+      opt.textContent = name;
+      sel.appendChild(opt);
+    }
+    sel.disabled = names.length === 0;
+    const preferred = names.find((n) => /wait|idle/i.test(n)) ?? names[0];
+    if (preferred) {
+      sel.value = preferred;
+      playLayerAnim(layer, preferred);
+    }
+  }
+  function fillSkins(sel, layer) {
+    sel.innerHTML = "";
+    const names = layer.data.skins.map((s) => s.name);
+    if (!names.includes("default")) {
+      const opt = document.createElement("option");
+      opt.value = "__none__";
+      opt.textContent = "default";
+      sel.appendChild(opt);
+    }
+    for (const name of names) {
+      const opt = document.createElement("option");
+      opt.value = name;
+      opt.textContent = name;
+      sel.appendChild(opt);
+    }
+    sel.disabled = false;
+    sel.value = names.includes("default") ? "default" : "__none__";
+  }
+  function playLayerAnim(layer, name) {
+    if (!layer || !name) return;
+    if (layer.data.animations.some((a) => a.name === name)) {
+      layer.state.setAnimation(0, name, loopCheck.checked);
+    } else {
+      layer.state.setEmptyAnimation(0, 0);
+    }
+  }
+  function setLayerSkin(layer, name) {
+    if (!layer) return;
+    if (name === "__none__") layer.skeleton.setSkin(null);
+    else layer.skeleton.setSkinByName(name);
+    layer.skeleton.setSlotsToSetupPose();
+    layer.state.apply(layer.skeleton);
   }
   function updateLayerStatus() {
     if (!overlayMode) {
@@ -12300,48 +12376,6 @@ bones=${d.bones.length} slots=${d.slots.length} anims=${d.animations.length} ski
     }).join("\n");
     setStatus(`\u5DF2\u53E0\u52A0 ${layers.length}/${MAX_LAYERS} \u5C42
 ${desc}`);
-  }
-  function populateAnimations(data) {
-    animSelect.innerHTML = "";
-    const names = data.animations.map((a) => a.name).sort();
-    for (const name of names) {
-      const opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = name;
-      animSelect.appendChild(opt);
-    }
-    animSelect.disabled = names.length === 0;
-    const preferred = names.find((n) => /wait|idle/i.test(n)) ?? names[0];
-    if (preferred) {
-      animSelect.value = preferred;
-      playAnimation(preferred);
-    }
-  }
-  function populateSkins(data) {
-    skinSelect.innerHTML = "";
-    const names = data.skins.map((s) => s.name);
-    if (!names.includes("default")) {
-      const opt = document.createElement("option");
-      opt.value = "__none__";
-      opt.textContent = "default";
-      skinSelect.appendChild(opt);
-    }
-    for (const name of names) {
-      const opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = name;
-      skinSelect.appendChild(opt);
-    }
-    skinSelect.disabled = false;
-    skinSelect.value = names.includes("default") ? "default" : "__none__";
-  }
-  function playAnimation(name) {
-    if (!name) return;
-    for (const layer of layers) {
-      const has = layer.data.animations.some((a) => a.name === name);
-      if (has) layer.state.setAnimation(0, name, loopCheck.checked);
-      else layer.state.setEmptyAnimation(0, 0);
-    }
   }
   function fitCamera() {
     if (layers.length === 0) return;
@@ -12383,20 +12417,16 @@ ${desc}`);
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
-  animSelect.addEventListener("change", () => playAnimation(animSelect.value));
+  animSelect.addEventListener("change", () => playLayerAnim(layers[0], animSelect.value));
+  animSelect1.addEventListener("change", () => playLayerAnim(layers[1], animSelect1.value));
+  skinSelect.addEventListener("change", () => setLayerSkin(layers[0], skinSelect.value));
+  skinSelect1.addEventListener("change", () => setLayerSkin(layers[1], skinSelect1.value));
   loopCheck.addEventListener("change", () => {
-    if (layers.length > 0 && animSelect.value) playAnimation(animSelect.value);
-  });
-  skinSelect.addEventListener("change", () => {
-    const name = skinSelect.value;
-    for (const layer of layers) {
-      const has = layer.data.skins.some((s) => s.name === name);
-      if (name === "__none__") layer.skeleton.setSkin(null);
-      else if (has) layer.skeleton.setSkinByName(name);
-      else continue;
-      layer.skeleton.setSlotsToSetupPose();
-      layer.state.apply(layer.skeleton);
-    }
+    animSelects.forEach((sel, i) => {
+      if (layers[i] && sel.value && sel.value !== "\u2014") {
+        playLayerAnim(layers[i], sel.value);
+      }
+    });
   });
   speedRange.addEventListener("input", () => {
     speed = parseFloat(speedRange.value);

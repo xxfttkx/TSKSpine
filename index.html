@@ -126,6 +126,11 @@
   .char-item.selected { background: #3a6ea5; color: #fff; }
   .char-item.selected .layer-tag { color: #fff; border-color: rgba(255,255,255,0.6); }
   .char-empty { padding: 10px; font-size: 11px; color: #777; text-align: center; }
+  .layer-panel { border-top: 1px solid #33333b; padding-top: 8px; margin-top: 4px; }
+  .layer-panel[hidden] { display: none; }
+  .layer-title { font-size: 11px; font-weight: bold; margin: 0 0 6px; }
+  .layer-title.main { color: #7fb4e5; }
+  .layer-title.sub { color: #8fce8f; }
 </style>
 </head>
 <body>
@@ -150,15 +155,29 @@
         <div class="char-empty">拖入资源后显示角色</div>
       </div>
     </div>
-    <div class="field">
-      <label>动画</label>
-      <select id="anim-select" disabled><option>—</option></select>
+    <div class="layer-panel" id="layer-panel-0">
+      <div class="layer-title main" id="layer-title-0" hidden>主层</div>
+      <div class="field">
+        <label>动画</label>
+        <select id="anim-select" disabled><option>—</option></select>
+      </div>
+      <div class="field">
+        <label>皮肤</label>
+        <select id="skin-select" disabled><option>default</option></select>
+      </div>
     </div>
-    <div class="field">
-      <label>皮肤</label>
-      <select id="skin-select" disabled><option>default</option></select>
+    <div class="layer-panel" id="layer-panel-1" hidden>
+      <div class="layer-title sub">叠加层</div>
+      <div class="field">
+        <label>动画</label>
+        <select id="anim-select-1" disabled><option>—</option></select>
+      </div>
+      <div class="field">
+        <label>皮肤</label>
+        <select id="skin-select-1" disabled><option>default</option></select>
+      </div>
     </div>
-    <label class="check"><input type="checkbox" id="loop-check" checked> 循环播放</label>
+    <label class="check"><input type="checkbox" id="loop-check" checked> 循环播放（对所有层生效）</label>
     <div class="field">
       <label>播放速度</label>
       <div class="speed-row">
